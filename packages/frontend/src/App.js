@@ -1,126 +1,122 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React, { useState } from 'react';
+import {
+  Alert,
+  CircularProgress,
+  Container,
+  CssBaseline,
+  Divider,
+  Typography,
+  Box,
+} from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useTranslation } from 'react-i18next';
+
+import './i18n';
+import useTodos from './hooks/useTodos';
+import AddTodoForm from './components/AddTodoForm';
+import TodoList from './components/TodoList';
+import FilterSortBar from './components/FilterSortBar';
+import EditTodoModal from './components/EditTodoModal';
+
+const theme = createTheme({
+  palette: {
+    primary: { main: '#1976d2' },
+  },
+});
 
 function App() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [newItem, setNewItem] = useState('');
+  const { t } = useTranslation();
+  const {
+    todos,
+    statuses,
+    loading,
+    error,
+    sort,
+    setSort,
+    filterByDeadline,
+    setFilterByDeadline,
+    addTodo,
+    editTodo,
+    removeTodo,
+  } = useTodos();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const [editingTodo, setEditingTodo] = useState(null);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/items');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const result = await response.json();
-      setData(result);
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch data: ' + err.message);
-      console.error('Error fetching data:', err);
-    } finally {
-      setLoading(false);
-    }
+  const handleEdit = (todo) => setEditingTodo(todo);
+  const handleCloseEdit = () => setEditingTodo(null);
+
+  const handleSave = async (id, data) => {
+    await editTodo(id, data);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!newItem.trim()) return;
-
-    try {
-      const response = await fetch('/api/items', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: newItem }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to add item');
-      }
-
-      const result = await response.json();
-      setData([...data, result]);
-      setNewItem('');
-    } catch (err) {
-      setError('Error adding item: ' + err.message);
-      console.error('Error adding item:', err);
-    }
-  };
-
-  const handleDelete = async (itemId) => {
-    try {
-      const response = await fetch(`/api/items/${itemId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete item');
-      }
-
-      setData(data.filter(item => item.id !== itemId));
-      setError(null);
-    } catch (err) {
-      setError('Error deleting item: ' + err.message);
-      console.error('Error deleting item:', err);
-    }
+  const handleStatusChange = async (id, data) => {
+    await editTodo(id, data);
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>To Do App</h1>
-        <p>Keep track of your tasks</p>
-      </header>
+    <ThemeProvider theme={theme}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <CssBaseline />
+        <Container maxWidth="md" sx={{ py: 4 }}>
+          {/* Header */}
+          <Box sx={{ mb: 4, textAlign: 'center' }}>
+            <Typography variant="h4" component="h1" fontWeight={700}>
+              {t('app.title')}
+            </Typography>
+            <Typography variant="subtitle1" color="text.secondary">
+              {t('app.subtitle')}
+            </Typography>
+          </Box>
 
-      <main>
-        <section className="add-item-section">
-          <h2>Add New Item</h2>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              value={newItem}
-              onChange={(e) => setNewItem(e.target.value)}
-              placeholder="Enter item name"
-            />
-            <button type="submit">Add Item</button>
-          </form>
-        </section>
+          {/* Add task form */}
+          <AddTodoForm statuses={statuses} onAdd={addTodo} />
 
-        <section className="items-section">
-          <h2>Items from Database</h2>
-          {loading && <p>Loading data...</p>}
-          {error && <p className="error">{error}</p>}
-          {!loading && !error && (
-            <ul>
-              {data.length > 0 ? (
-                data.map((item) => (
-                  <li key={item.id}>
-                    <span>{item.name}</span>
-                    <button 
-                      onClick={() => handleDelete(item.id)}
-                      className="delete-btn"
-                      type="button"
-                    >
-                      Delete
-                    </button>
-                  </li>
-                ))
-              ) : (
-                <p>No items found. Add some!</p>
-              )}
-            </ul>
+          {/* Sort / filter controls */}
+          <FilterSortBar
+            sort={sort}
+            setSort={setSort}
+            filterByDeadline={filterByDeadline}
+            setFilterByDeadline={setFilterByDeadline}
+          />
+
+          <Divider sx={{ mb: 2 }} />
+
+          {/* State feedback */}
+          {loading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+              <CircularProgress aria-label={t('status.loading')} />
+            </Box>
           )}
-        </section>
-      </main>
-    </div>
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+
+          {/* Todo list */}
+          {!loading && !error && (
+            <TodoList
+              todos={todos}
+              statuses={statuses}
+              onEdit={handleEdit}
+              onDelete={removeTodo}
+              onStatusChange={handleStatusChange}
+            />
+          )}
+
+          {/* Edit modal */}
+          <EditTodoModal
+            open={Boolean(editingTodo)}
+            todo={editingTodo}
+            statuses={statuses}
+            onSave={handleSave}
+            onClose={handleCloseEdit}
+          />
+        </Container>
+      </LocalizationProvider>
+    </ThemeProvider>
   );
 }
 

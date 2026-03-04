@@ -1,0 +1,42 @@
+{
+  "app": {
+    "title": "ToDo App",
+    "subtitle": "Keep track of your tasks"
+  },
+  "todo": {
+    "addTitle": "Add New Task",
+    "titleLabel": "Task Title",
+    "titlePlaceholder": "What needs to be done?",
+    "deadlineLabel": "Deadline (optional)",
+    "notesLabel": "Notes",
+    "notesPlaceholder": "Add any additional notes...",
+    "priorityLabel": "Priority",
+    "statusLabel": "Status",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add Task",
+    "noTasks": "No tasks yet. Add one above!",
+    "confirmDelete": "Are you sure you want to delete this task?",
+    "editTitle": "Edit Task",
+    "priority": {
+      "0": "None",
+      "1": "Low",
+      "2": "Medium",
+      "3": "High"
+    }
+  },
+  "filter": {
+    "label": "Sort / Filter",
+    "sortBy": "Sort by",
+    "sortCreated": "Date Created",
+    "sortDeadline": "Deadline",
+    "sortPriority": "Priority",
+    "filterDeadline": "Filter by Deadline"
+  },
+  "status": {
+    "loading": "Loading tasks...",
+    "error": "Something went wrong"
+  }
+}
