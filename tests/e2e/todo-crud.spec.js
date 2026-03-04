@@ -16,9 +16,7 @@ test.describe('Edit and delete a task', () => {
     await todoPage.clickEdit('Task to edit');
 
     // Update the title in the modal
-    const modalTitle = page.getByLabel('Task Title');
-    await modalTitle.clear();
-    await modalTitle.fill('Edited task title');
+    await todoPage.fillModalField('Task Title', 'Edited task title');
     await todoPage.saveModal();
 
     await todoPage.expectTodoVisible('Edited task title');
@@ -31,7 +29,7 @@ test.describe('Edit and delete a task', () => {
     await todoPage.addTodo('Task for notes');
     await todoPage.clickEdit('Task for notes');
 
-    await page.getByLabel('Notes').fill('These are my notes');
+    await todoPage.fillModalField('Notes', 'These are my notes');
     await todoPage.saveModal();
 
     await expect(page.getByText('These are my notes')).toBeVisible();
@@ -55,9 +53,7 @@ test.describe('Edit and delete a task', () => {
     await todoPage.addTodo('Task cancel test');
     await todoPage.clickEdit('Task cancel test');
 
-    const modalTitle = page.getByLabel('Task Title');
-    await modalTitle.clear();
-    await modalTitle.fill('Should not be saved');
+    await todoPage.fillModalField('Task Title', 'Should not be saved');
     await todoPage.cancelModal();
 
     await todoPage.expectTodoVisible('Task cancel test');

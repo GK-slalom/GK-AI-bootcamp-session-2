@@ -106,7 +106,7 @@ const EditTodoModal = ({ open, todo, statuses, onSave, onClose }) => {
             label={t('todo.deadlineLabel')}
             value={deadline}
             onChange={setDeadline}
-            slotProps={{ textField: { fullWidth: true } }}
+            slotProps={{ textField: { fullWidth: true, 'data-testid': 'modal-deadline-picker' } }}
           />
 
           <FormControl fullWidth>

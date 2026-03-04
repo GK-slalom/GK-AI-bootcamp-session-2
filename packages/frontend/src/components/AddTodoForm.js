@@ -81,7 +81,7 @@ const AddTodoForm = ({ statuses, onAdd }) => {
           label={t('todo.deadlineLabel')}
           value={deadline}
           onChange={setDeadline}
-          slotProps={{ textField: { size: 'small', sx: { minWidth: 180 } } }}
+          slotProps={{ textField: { size: 'small', sx: { minWidth: 180 }, 'data-testid': 'add-deadline-picker' } }}
         />
 
         <FormControl size="small" sx={{ minWidth: 130 }}>

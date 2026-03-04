@@ -36,6 +36,7 @@ const FilterSortBar = ({ sort, setSort, filterByDeadline, setFilterByDeadline })
       </FormControl>
 
       <FormControlLabel
+        data-testid="filter-deadline-toggle"
         control={
           <Switch
             checked={filterByDeadline}

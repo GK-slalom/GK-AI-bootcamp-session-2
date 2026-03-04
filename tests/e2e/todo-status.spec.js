@@ -32,8 +32,7 @@ test.describe('Task status changes', () => {
     await todoPage.addTodo('Modal status task');
     await todoPage.clickEdit('Modal status task');
 
-    await page.getByLabel('Status').click();
-    await page.getByRole('option', { name: 'In Progress' }).click();
+    await todoPage.selectModalStatus('In Progress');
     await todoPage.saveModal();
 
     await todoPage.expectTodoVisible('Modal status task');
